@@ -20,16 +20,38 @@ require('cmp').setup {
 ### blink.cmp
 
 ```lua
-sources = {
-    providers = {
-        -- default providers
-        { "blink.cmp.sources.lsp",      name = "LSP" },
-        { "blink.cmp.sources.path",     name = "Path",     score_offset = 3 },
-        { "blink.cmp.sources.snippets", name = "Snippets", score_offset = -3 },
-        { "blink.cmp.sources.buffer",   name = "Buffer",   fallback_for = { "LSP" } },
+-- ...
 
-        -- notmuch source
-        { "blink.cmp.sources.notmuch",  name = "Notmuch" },
+sources = {
+    completion = {
+        enabled_providers = { "lsp", "path", "snippets", "buffer", "notmuch" },
     },
-}
+    providers = {
+        lsp = {
+            name = "LSP",
+            module = "blink.cmp.sources.lsp",
+        },
+        path = {
+            name = "Path",
+            module = "blink.cmp.sources.path",
+            score_offset = 3,
+        },
+        snippets = {
+            name = "Snippets",
+            module = "blink.cmp.sources.snippets",
+            score_offset = -3,
+        },
+        buffer = {
+            name = "Buffer",
+            module = "blink.cmp.sources.buffer",
+            fallback_for = { "lsp" },
+        },
+        notmuch = {
+            name = "Notmuch",
+            module = "blink.cmp.sources.notmuch",
+        },
+    },
+},
+
+-- ...
 ```
