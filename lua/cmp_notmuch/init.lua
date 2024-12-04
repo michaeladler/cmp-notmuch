@@ -25,9 +25,18 @@ end
 source.complete = function(self, request, callback)
     -- https://github.com/hrsh7th/nvim-cmp/blob/main/lua/cmp/context.lua
     if request.context.cursor.line <= 3 then
-        local input = string.sub(request.context.cursor_before_line, request.offset)
-        callback({ items = util.candidates(input), isIncomplete = true })
-        return
+        local search_term = string.sub(request.context.cursor_before_line, request.offset)
+        if string.len(search_term) < 3 then
+            callback()
+            return
+        end
+        util.async_search(search_term, function(items)
+            if items then
+                callback({ items = items, isIncomplete = true })
+            else
+                callback()
+            end
+        end)
     end
     callback()
 end

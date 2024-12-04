@@ -5,6 +5,18 @@
 - [nvim-cmp](https://github.com/hrsh7th/nvim-cmp)
 - [blink.cmp](https://github.com/Saghen/blink.cmp)
 
+## Dependencies
+
+- [plenary.nvim](https://github.com/nvim-lua/plenary.nvim)
+
+## Install
+
+Using [lazy.nvim](https://github.com/folke/lazy.nvim):
+
+```lua
+{ "michaeladler/cmp-notmuch", dependencies = "nvim-lua/plenary.nvim" },
+```
+
 ## Setup
 
 ### nvim-cmp

@@ -22,16 +22,23 @@ function notmuch:get_completions(context, callback)
         callback()
         return
     end
-
-    local input = string.sub(context.line, context.bounds.start_col, context.bounds.end_col)
-    local candidates = util.candidates(input)
-
-    callback({
-        context = context,
-        is_incomplete_forward = true,
-        is_incomplete_backward = true,
-        items = candidates.items or candidates,
-    })
+    local search_term = string.sub(context.line, context.bounds.start_col, context.bounds.end_col)
+    if string.len(search_term) < 3 then
+        callback()
+        return
+    end
+    util.async_search(search_term, function(items)
+        if items then
+            callback({
+                context = context,
+                is_incomplete_forward = true,
+                is_incomplete_backward = true,
+                items = items,
+            })
+        else
+            callback()
+        end
+    end)
 end
 
 return notmuch

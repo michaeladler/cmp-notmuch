@@ -5,6 +5,8 @@
 
 local M = {}
 
+local Job = require("plenary.job")
+
 M.candidates = function(search_term)
     local cmd = string.format("notmuch address --format=json --deduplicate=address '%s'", search_term)
     local response = vim.fn.system(cmd)
@@ -40,6 +42,30 @@ M.candidates = function(search_term)
     end
 
     return items
+end
+
+M.async_search = function(search_term, done_cb)
+    local items = {}
+    Job:new({
+        command = "notmuch",
+        args = { "address", "--deduplicate=address", "--", string.format("from:/%s/", search_term) },
+        on_stdout = function(_, data)
+            table.insert(items, {
+                word = data,
+                label = data,
+                insertText = data,
+                kind = vim.lsp.protocol.CompletionItemKind.Text,
+                insertTextFormat = vim.lsp.protocol.InsertTextFormat.Snippet,
+            })
+        end,
+        on_exit = function(_, exit_code)
+            if exit_code ~= 0 then
+                done_cb()
+                return
+            end
+            done_cb(items)
+        end,
+    }):start()
 end
 
 return M
